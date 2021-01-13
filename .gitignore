@@ -130,6 +130,7 @@ dmypy.json
 
 # Misc
 /TestFiles
+.idea
 *.xlsx
 *.xls
 *.sav
