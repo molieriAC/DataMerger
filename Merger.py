@@ -73,8 +73,8 @@ def main():
     # All the stuff inside your window.
     layout = [[sg.Text('Select the root directory'), sg.FolderBrowse(key="-DIR-"),
                sg.Text('Select the file type'), sg.Combo(["excel", "spss"], key="-FileType-")],
-              [sg.Text("Text used for matching files"), sg.InputText(key="-MatchKey-")],
-              [sg.Text('If excel, what is the sheet name?'), sg.InputText(key="-ExcelSheet-")],
+              [sg.Text("Text used for matching files (case sensitive)"), sg.InputText(key="-MatchKey-")],
+              [sg.Text('If excel, what is the sheet name? (case sensitive)'), sg.InputText(key="-ExcelSheet-")],
               [sg.Text('Name the output file (no extension needed)'), sg.InputText(key="-OutFile-")],
               [sg.Button('Ok'), sg.Button('Cancel')]]
 
