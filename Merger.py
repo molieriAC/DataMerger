@@ -24,26 +24,24 @@ def FileFinder(d, k):
     return savs
 
 
-def MergeRunner(inputs):
-    """
+def MergeRunner(inputs, files):
+    """Merges the files that are passed in based on informaion from the GUI
 
-    Args: inputs: determines which type of merge should be done depending on which file type was selected by the GUI,
-    and directs the merge operations
+    Args:
+        inputs: determines which type of merge should be done depending on which file type was selected by the GUI,
+        and directs the merge operations
+
+        files: A list of files to be merged
 
     Returns: outputs the file location to console
 
     """
-    # get the list of files to be merged
-    saveList = FileFinder(inputs["-DIR-"], inputs["-MatchKey-"])
-
-    # Allow for the flexibility of merging SPSS or excel files
-
     # File Merger for spss files
     if inputs["-FileType-"] == "spss":
         filesList = []
         valLabels = {}
         # missingLabels = {}
-        for i in saveList:
+        for i in files:
             newF, spssMeta = prd.read_sav(i, user_missing=True, disable_datetime_conversion=True)
             filesList.append(newF)
             # Loop through the value labels dictionary to update the sub-dicts
@@ -54,16 +52,18 @@ def MergeRunner(inputs):
                     valLabels[j].update(spssMeta.variable_value_labels[j])
             # missingLabels.update(spssMeta.missing_ranges)
         allFiles = pd.concat(filesList, sort=False)
-        prd.write_sav(allFiles, inputs["-DIR-"] + "\\" + inputs["-OutFile-"] + ".sav",
+        prd.write_sav(allFiles, inputs["-DIR-"] + "/" + inputs["-OutFile-"] + ".sav",
                       variable_value_labels=valLabels)
+        return "merged spss file saved at: " + inputs["-DIR-"] + "/" + inputs["-OutFile-"] + ".sav"
 
     # File Merger for excel files
     if inputs["-FileType-"] == "excel":
         filesList = []
-        for i in saveList:
+        for i in files:
             filesList.append(pd.read_excel(i, sheet_name=inputs["-ExcelSheet-"]))
         allFiles = pd.concat(filesList, sort=False)
-        allFiles.to_excel(inputs["-DIR-"] + "\\" + inputs["-OutFile-"] + ".xlsx", index=False)
+        allFiles.to_excel(inputs["-DIR-"] + "/" + inputs["-OutFile-"] + ".xlsx", index=False)
+        return "merged excel file saved at: " + inputs["-DIR-"] + "/" + inputs["-OutFile-"] + ".xlsx"
 
 
 def main():
@@ -86,7 +86,11 @@ def main():
         exit()
     window.close()
 
-    MergeRunner(values)
+    # get the list of files to be merged
+    saveList = FileFinder(values["-DIR-"], values["-MatchKey-"])
+    # run the merge and output file location to the console
+    merger = MergeRunner(values, saveList)
+    print(merger)
 
 
 if __name__ == '__main__':
